@@ -7,7 +7,7 @@ from src.models.chat import Chat
 def home_page():
     return render_template('index.html')
 
-@app.route('/generate', methods=['POST'])
+@app.route('/letter', methods=['POST'])
 def generate_cover_letter():
     resume = request.form['resume']
     job_description = request.form['job_description']
@@ -15,4 +15,10 @@ def generate_cover_letter():
 
     cover_letter = Chat.generate_cover_letter(resume, job_description, previous_cover_letter)
     
-    return render_template('cover_letter.html', cover_letter=cover_letter)
+    return render_template('index.html', cover_letter=cover_letter)
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_input = request.form['user_input']
+    chat_response = Chat().get_ai_answer(user_input)
+    return render_template('index.html', chat_response=chat_response)
