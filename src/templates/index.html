@@ -1,0 +1,50 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <!-- Include your stylesheet here if you have one -->
+</head>
+<body>
+    <h1>Chat with our AI Assistant</h1>
+
+    <div id="chat-box">
+        <!-- Messages will be displayed here -->
+    </div>
+
+    <input type="text" id="user-message" placeholder="Type your message here...">
+    <button onclick="sendMessage()">Send</button>
+
+    <!-- Include Socket.IO's JavaScript CDN -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+    
+        socket.on('connect', function() {
+            console.log('Connected to the server.');
+        });
+    
+        socket.on('ai_answer', function(msg) {
+            // Append the AI's answer to the chat box
+            var chatBox = document.getElementById('chat-box');
+            var newMessage = document.createElement('div');
+            newMessage.innerHTML = `<strong>AI:</strong> ${msg.data}`; // Access the 'data' property
+            chatBox.appendChild(newMessage);
+        });
+    
+        function sendMessage() {
+            var userMessage = document.getElementById('user-message').value;
+            socket.emit('message', {data: userMessage});
+            // Append the user's message to the chat box
+            var chatBox = document.getElementById('chat-box');
+            var newMessage = document.createElement('div');
+            newMessage.innerHTML = `<strong>You:</strong> ${userMessage}`;
+            chatBox.appendChild(newMessage);
+            // Clear the input
+            document.getElementById('user-message').value = '';
+        }
+    </script>
+</body>
+</html>
